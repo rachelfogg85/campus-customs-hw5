@@ -1,0 +1,66 @@
+[
+  {
+    "prompt": "Check how much stock we have of CC-TEE-WHITE size S so we can resolve ticket 101.",
+    "tool_name": "check_inventory",
+    "tool_input": {
+      "sku": "CC-TEE-WHITE",
+      "size": "S"
+    },
+    "tool_output": {
+      "sku": "CC-TEE-WHITE",
+      "size": "S",
+      "matches": [
+        {
+          "sku": "CC-TEE-WHITE",
+          "name": "Classic Bulldog Tee",
+          "size": "S",
+          "qty": 0,
+          "location": "Aisle B"
+        }
+      ]
+    }
+  },
+  {
+    "prompt": "Ticket 101 is linked to invoice 501 \u2014 look up its status and tell me if Bulldog Print Co is blocked from shipping a restock.",
+    "tool_name": "get_invoice_status",
+    "tool_input": {
+      "invoice_id": 501
+    },
+    "tool_output": {
+      "found": true,
+      "invoice_id": 501,
+      "vendor_id": 1,
+      "vendor_name": "Bulldog Print Co",
+      "vendor_specialty": "apparel reprint",
+      "vendor_lead_days": 5,
+      "amount": 840.0,
+      "due_date": "2026-08-28",
+      "status": "open",
+      "description": "Rush reprint CC-TEE-WHITE S",
+      "date_today": "2026-08-31",
+      "is_overdue": true,
+      "vendor_blocked_from_shipping": true
+    }
+  },
+  {
+    "prompt": "Ticket 102 is a rent notice for lease 1 \u2014 check the lease against the cash balance to see if we can cover it.",
+    "tool_name": "get_lease_payment_status",
+    "tool_input": {
+      "lease_id": 1
+    },
+    "tool_output": {
+      "found": true,
+      "lease_id": 1,
+      "space_name": "Chapel Street shop",
+      "landlord": "Elm City Properties",
+      "monthly_rent": 2400.0,
+      "next_due": "2026-09-02",
+      "notes": null,
+      "date_today": "2026-08-31",
+      "days_until_due": 2,
+      "cash_account": "checking",
+      "cash_balance": 3400.0,
+      "cash_covers_rent": true
+    }
+  }
+]

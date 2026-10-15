@@ -1,0 +1,15 @@
+# Secrets -- never commit a real key
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+
+# OS cruft
+.DS_Store

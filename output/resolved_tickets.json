@@ -1,0 +1,82 @@
+{
+  "run_notes": "Problem 9 full run: data/campus_customs_new.db was reset to the original values via POST /api/reset immediately before running all three tickets. Starting checking balance was $3,400.00. Each ticket below reflects the agent team's own final decision (whatever status the Boss actually chose), plus any payment/purchase-order approvals I made afterward as the human reviewer.",
+  "tickets": [
+    {
+      "id": 101,
+      "type": "customer_order",
+      "requester": "Tauhid Zaman",
+      "final_status": "blocked",
+      "short_outcome": "0 CC-TEE-WHITE size S on hand for Tauhid's order of 1. Bulldog Print Co (the restock vendor) was blocked from shipping by overdue invoice 501 ($840). Customer Service drafted (never sent) an honest delay message. No cash moved during the agent run itself.",
+      "delegations": 9,
+      "agent_contributions": {
+        "boss": "Looked up the ticket, delegated to Inventory first, then to Accounting and Customer Service together, and closed the ticket out with update_ticket_status(status='blocked').",
+        "inventory": "Confirmed CC-TEE-WHITE/S qty=0 (short by 1), identified Bulldog Print Co (apparel reprint, 5-day lead time) as the restock vendor, and cross-checked with Accounting on its own initiative before answering.",
+        "accounting": "Confirmed invoice 501 ($840, due 2026-08-28) was open and overdue against the shop's date (2026-08-31), explained that this blocks Bulldog Print Co from shipping, and explicitly declined to draft a purchase order until the invoice is cleared.",
+        "facilities": "Not involved — ticket has no lease_id.",
+        "customer_service": "Delegated to Inventory and Accounting for the real stock/vendor-block facts, then drafted an honest, non-committal delay message to Tauhid Zaman citing an unconfirmed ~5-day lead time. Message was drafted only, never sent."
+      },
+      "human_approvals": [
+        {
+          "action": "pay_invoice",
+          "ref": "invoice 501 (Bulldog Print Co, $840.00)",
+          "approved_by": "Rachel Fogg",
+          "result": "paid",
+          "new_checking_balance": 2560.00,
+          "note": "Approved after the agent run, to unblock the vendor for future restocking. This is what let ticket 103's later pass successfully draft a new purchase order."
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "type": "rent_notice",
+      "requester": "Elm City Properties",
+      "final_status": "escalated",
+      "short_outcome": "Chapel Street lease rent of $2,400 is due 2026-09-02 (2 days from the shop's date). Checking balance ($3,400) covers it, leaving $1,000. Accounting prepared the payment but did not execute it — human approval required.",
+      "delegations": 3,
+      "agent_contributions": {
+        "boss": "Looked up the ticket, delegated to Facilities and Accounting together, and closed the ticket out with update_ticket_status(status='escalated').",
+        "inventory": "Not involved — no SKU on this ticket.",
+        "accounting": "Confirmed the checking balance ($3,400) covers the $2,400 rent, computed the $1,000 remainder, and stated the payment is ready for human approval but that it will not execute it itself.",
+        "facilities": "Reported the Chapel Street lease: $2,400/month, due 2026-09-02, 2 days out from the shop's date — and independently asked Accounting to confirm cash coverage rather than reporting the lease facts alone.",
+        "customer_service": "Not involved — no customer-facing message needed for a landlord rent notice."
+      },
+      "human_approvals": [
+        {
+          "action": "pay_lease",
+          "ref": "lease 1 (Chapel Street shop, $2,400.00 rent)",
+          "approved_by": "Rachel Fogg",
+          "result": "paid",
+          "new_checking_balance": 160.00,
+          "new_next_due": "2026-10-02"
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "type": "price_override",
+      "requester": "Yale AI Club",
+      "final_status": "blocked",
+      "short_outcome": "8 of 20 requested CC-HOOD-NAVY size M on hand (short 12). Margin at list price is $36/hoodie ($720 total). After invoice 501 was paid (from ticket 101's approval), Accounting successfully drafted a new purchase order to Bulldog Print Co (invoice 502, $264, pending_approval) for the 12-unit shortfall — but a second create_purchase_order attempt in the same run was refused because that same new invoice 502 was itself unpaid. No specific discount amount was ever given to evaluate.",
+      "delegations": 3,
+      "agent_contributions": {
+        "boss": "Looked up the ticket, delegated to Inventory and Accounting together, and closed the ticket out with update_ticket_status(status='blocked').",
+        "inventory": "Confirmed CC-HOOD-NAVY/M qty=8 (short by 12 against the requested 20) and identified Bulldog Print Co as the restock vendor.",
+        "accounting": "Computed margin ($58 list - $22 cost = $36/hoodie, $720 total at list, no discount to evaluate since none was proposed), noticed invoice 501 now showed status='paid', successfully drafted purchase order invoice 502 ($264) for the 12-unit restock, then had a second create_purchase_order attempt correctly refused because invoice 502 itself was unpaid.",
+        "facilities": "Not involved — no lease on this ticket.",
+        "customer_service": "Not involved, matching my Problem 6 prediction — this read as an internal pricing/stock decision, not a customer-support situation."
+      },
+      "human_approvals": [
+        {
+          "action": "pay_invoice",
+          "ref": "invoice 502 (Bulldog Print Co, $264.00, 12x CC-HOOD-NAVY restock)",
+          "approved_by": "Rachel Fogg",
+          "result": "refused",
+          "reason": "Paying $264.00 would take checking below zero (balance was $160.00 at the time). No negative balances allowed.",
+          "new_checking_balance": 160.00
+        }
+      ]
+    }
+  ],
+  "ending_checking_balance": 160.00,
+  "ending_checking_balance_verified_against": "data/campus_customs_new.db: select * from cash_accounts (checking | 160.0); select * from payments (2 rows: invoice/501/$840.00, rent/1/$2400.00); select * from invoices (501 paid, 502 pending_approval, unpaid)."
+}

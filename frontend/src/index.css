@@ -1,0 +1,67 @@
+:root {
+  --black: #ffffff;
+  --black-soft: #f3f7fc;
+  --panel: #fafcff;
+  --panel-raised: #eef4fb;
+  --line: #bcd4ee;
+  --line-soft: #dbe8f7;
+
+  --pink: #1d5fd1;
+  --pink-soft: #1d5fd133;
+  --pink-glow: #1d5fd166;
+  --pink-faint: #1d5fd115;
+
+  --text: #16202c;
+  --text-dim: #5b6b7d;
+  --text-faint: #8a97a6;
+
+  --good: #1f8f5f;
+  --warn: #a3690a;
+  --bad: #c23a3a;
+
+  /* Agent accents — all within the blue family, so the whole board still
+     reads as one white-and-blue desk, but each role is instantly
+     distinguishable by hue + a fixed initial badge. */
+  --agent-boss: #1d5fd1;
+  --agent-inventory: #5fa8ff;
+  --agent-accounting: #4a3fd6;
+  --agent-facilities: #2f8fc7;
+  --agent-customer-service: #8fc3ff;
+  --agent-orchestrator: #8a93a6;
+
+  color-scheme: light;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, "Segoe UI", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--black);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+code,
+.mono {
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 8px;
+}

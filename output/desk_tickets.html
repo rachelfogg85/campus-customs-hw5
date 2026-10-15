@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campus Customs — Desk Tickets</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --panel: #f9fbfd;
+    --pink: #1d5fd1;
+    --pink-soft: #cfe0f7;
+    --pink-faint: #f1f6fd;
+    --text: #222222;
+    --text-dim: #666666;
+    --bad: #b8294b;
+    --warn: #a3690a;
+    --good: #1f8f5f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  header {
+    padding: 28px 32px 16px;
+    border-bottom: 2px solid var(--pink-soft);
+  }
+  header h1 {
+    margin: 0 0 4px;
+    color: var(--pink);
+    font-size: 1.6rem;
+    letter-spacing: 0.01em;
+  }
+  header p {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+  }
+  nav.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 16px 32px 0;
+    border-bottom: 2px solid var(--pink-soft);
+  }
+  nav.tabs button {
+    background: #f5f5f5;
+    color: var(--text-dim);
+    border: 1px solid #e3e3e3;
+    border-bottom: none;
+    padding: 10px 20px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: color 0.15s, background 0.15s;
+  }
+  nav.tabs button:hover {
+    color: var(--text);
+  }
+  nav.tabs button.active {
+    background: var(--panel);
+    color: var(--pink);
+    border-color: var(--pink-soft);
+  }
+  main {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 32px;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--pink-soft);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    margin-top: 0;
+    color: var(--pink);
+    font-size: 1.15rem;
+    border-bottom: 1px solid var(--pink-soft);
+    padding-bottom: 10px;
+  }
+  .ticket-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px 20px;
+    margin-bottom: 18px;
+  }
+  .ticket-meta div { font-size: 0.88rem; }
+  .ticket-meta span.label {
+    display: block;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.7rem;
+    margin-bottom: 2px;
+  }
+  h3.section-title {
+    color: var(--pink);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 22px 0 10px;
+  }
+  .pill {
+    display: inline-block;
+    background: var(--pink-faint);
+    color: var(--pink);
+    border: 1px solid var(--pink-soft);
+    border-radius: 999px;
+    padding: 2px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 0 6px 6px 0;
+  }
+  ol, ul { padding-left: 22px; margin: 8px 0; }
+  li { margin-bottom: 8px; line-height: 1.6; }
+  .placeholder {
+    border: 1px dashed var(--pink-soft);
+    border-radius: 8px;
+    padding: 18px;
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+  .coming-later {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-dim);
+  }
+  .coming-later .pill { font-size: 0.9rem; padding: 6px 18px; }
+  .reflect-q {
+    color: var(--pink);
+    font-size: 1.1rem;
+    margin: 0 0 10px;
+    border-bottom: 1px solid var(--pink-soft);
+    padding-bottom: 8px;
+  }
+  .reflect-sub {
+    color: var(--pink);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin: 18px 0 4px;
+  }
+  .jump {
+    color: var(--pink);
+    background: var(--pink-faint);
+    border: 1px solid var(--pink-soft);
+    border-radius: 999px;
+    padding: 1px 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .jump:hover { background: var(--pink-soft); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  th { text-align: left; color: var(--text-dim); padding: 8px; }
+  td { padding: 10px 8px; vertical-align: top; }
+  tr.row { border-top: 1px solid var(--pink-soft); }
+  .big-number { font-size: 1.4rem; font-weight: 700; color: var(--pink); }
+  .note { color: var(--text-dim); font-size: 0.88rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Desk Tickets — Campus Customs</h1>
+  <p>What we expected the AI team to do on each ticket, what it actually did, how the money moved, and what we learned.</p>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="t101">Ticket 101</button>
+  <button class="tab-btn" data-tab="t102">Ticket 102</button>
+  <button class="tab-btn" data-tab="t103">Ticket 103</button>
+  <button class="tab-btn" data-tab="cash">Cash</button>
+  <button class="tab-btn" data-tab="reflection">Reflection</button>
+</nav>
+
+<main>
+
+  <!-- TICKET 101 -->
+  <section class="tab-panel active" id="t101">
+    <div class="card">
+      <h2>Ticket 101 — Customer order</h2>
+      <div class="ticket-meta">
+        <div><span class="label">From</span>Tauhid Zaman</div>
+        <div><span class="label">What</span>Bulldog tee</div>
+        <div><span class="label">Item</span>White tee, size S, qty 1</div>
+        <div><span class="label">Linked bill</span>Invoice 501</div>
+      </div>
+
+      <h3 class="section-title">What we expected</h3>
+      <p><strong>Who should get asked first, and why:</strong> Inventory, before anyone else. The first question is simply "do we have this shirt?" Nothing else matters until we know that.</p>
+
+      <h3 class="section-title">What we expected to happen</h3>
+      <ol>
+        <li><span class="pill">Boss asks Inventory</span> — "do we have a white tee in size S?" Inventory checks and finds none in stock, so this is a real shortage, not a quick yes.</li>
+        <li><span class="pill">Boss asks Accounting</span> — since this ticket is tied to an unpaid bill (invoice 501), the Boss asks Accounting to check it. Accounting reports the bill is overdue, and until it's paid, our supplier (Bulldog Print Co) won't ship us anything new.</li>
+        <li><span class="pill">Boss asks Customer Service</span> — to write an update for the customer. Customer Service doesn't know the stock or billing details itself, so it checks with:
+          <ul>
+            <li><span class="pill">Customer Service asks Inventory</span> — to confirm it's out of stock and get a realistic restock timeframe, so the message doesn't make up a delivery date.</li>
+            <li><span class="pill">Customer Service asks Accounting</span> — to confirm the restock is stuck, so the message doesn't promise something that can't happen.</li>
+          </ul>
+        </li>
+      </ol>
+      <p>We did <em>not</em> expect Facilities (the team handling the store space/rent) to get involved here — this ticket has nothing to do with the shop's physical space.</p>
+
+      <h3 class="section-title">What actually happened</h3>
+      <p><strong>Who got asked first:</strong> Inventory — exactly as expected.</p>
+
+      <h3 class="section-title">The back-and-forth (9 check-ins total)</h3>
+      <ol>
+        <li><span class="pill">Boss → Inventory</span> — checked stock; Inventory then went a step further on its own and checked with <span class="pill">Accounting</span> about whether the supplier could even take a new order.</li>
+        <li><span class="pill">Accounting → Inventory</span> — while answering, Accounting circled back to double-check the restock recommendation before finalizing its answer.</li>
+        <li><span class="pill">Boss → Accounting</span> and <span class="pill">Boss → Customer Service</span> — asked together at the same time (we expected one after the other), confirming the supplier is still blocked and asking for a customer message.</li>
+        <li><span class="pill">Customer Service → Inventory</span> and <span class="pill">Customer Service → Accounting</span> — exactly as expected, it pulled the real facts before writing anything.</li>
+      </ol>
+      <p>That's 9 separate check-ins between team members — about three times as many as Ticket 102 needed for a similarly simple question. See the <a class="jump" onclick="jump('reflection')">Reflection</a> tab for why that matters.</p>
+
+      <h3 class="section-title">What the team actually checked</h3>
+      <ul>
+        <li>Inventory looked up the ticket, checked the stock count, looked up the supplier list, and checked today's date — all as expected.</li>
+        <li>Accounting checked the unpaid bill, the shop's cash on hand, and the item's price — the cash and pricing checks weren't something we predicted, but they make sense as due diligence before ruling anything out.</li>
+        <li>The Boss closed the ticket out with a final status update.</li>
+      </ul>
+
+      <h3 class="section-title">Outcome</h3>
+      <p>Final status: <span class="pill">Blocked</span> — matches what we expected. No white tees (size S) in stock, and the supplier can't ship a replacement until the $840 bill (invoice 501) is paid, which was already overdue. Customer Service wrote an honest, never-sent note to Tauhid explaining the delay without promising a specific date. No money moved for this ticket during the AI run itself — see the <a class="jump" onclick="jump('cash')">Cash</a> tab for what happened after we (the human) approved that overdue bill.</p>
+    </div>
+  </section>
+
+  <!-- TICKET 102 -->
+  <section class="tab-panel" id="t102">
+    <div class="card">
+      <h2>Ticket 102 — Rent notice</h2>
+      <div class="ticket-meta">
+        <div><span class="label">From</span>Elm City Properties</div>
+        <div><span class="label">What</span>Rent due</div>
+        <div><span class="label">Linked lease</span>Lease 1 (Chapel Street shop)</div>
+      </div>
+
+      <h3 class="section-title">What we expected</h3>
+      <p><strong>Who should get asked first, and why:</strong> Facilities, first. This is a lease notice, and Facilities is the one who actually knows the lease terms — the rent amount, when it's due, how many days are left. Asking about money before anyone has those numbers wouldn't make sense.</p>
+
+      <h3 class="section-title">What we expected to happen</h3>
+      <ol>
+        <li><span class="pill">Boss asks Facilities</span> — "what does the lease say — rent, due date, days left?" Facilities reports $2,400 a month, due in 2 days.</li>
+        <li><span class="pill">Boss asks Accounting</span> — "do we have enough cash to cover $2,400, and what has to happen to actually pay it?" Accounting checks the cash on hand ($3,400, enough to cover it) and says a person still has to approve the payment before anything moves.</li>
+      </ol>
+      <p>We didn't expect Inventory or Customer Service to be involved — there's no product and no customer message to write (the "customer" here is the landlord, and we're not drafting them anything in this exercise).</p>
+
+      <h3 class="section-title">What actually happened</h3>
+      <p><strong>Who got asked first:</strong> Facilities — matches what we expected, though in practice the Boss asked Facilities and Accounting at the same time rather than waiting for one before asking the other.</p>
+
+      <h3 class="section-title">The back-and-forth (3 check-ins total)</h3>
+      <ol>
+        <li><span class="pill">Boss → Facilities</span> — reported rent of $2,400, due in 2 days.</li>
+        <li><span class="pill">Boss → Accounting</span> — confirmed the $3,400 on hand covers the $2,400 rent, leaving $1,000, and that it's "ready for a person to approve."</li>
+        <li><span class="pill">Facilities → Accounting</span> — one extra step we didn't predict: Facilities itself double-checked with Accounting that the cash was really there, instead of just reporting the lease terms and stopping.</li>
+      </ol>
+      <p>This was the cleanest, fastest-resolving ticket of the three — see the <a class="jump" onclick="jump('reflection')">Reflection</a> tab for how consistently it came out the same way across several separate runs.</p>
+
+      <h3 class="section-title">What the team actually checked</h3>
+      <ul>
+        <li>Facilities looked up the lease terms, as expected.</li>
+        <li>Accounting checked both the lease terms <em>and</em> the cash balance itself, rather than just trusting Facilities' word for it — exactly what we hoped it would do.</li>
+        <li>The Boss closed the ticket out with a final status update.</li>
+      </ul>
+
+      <h3 class="section-title">Outcome</h3>
+      <p>Final status: <span class="pill">Escalated</span> (we predicted "blocked, pending approval" — same meaning, different word choice). No money moved during the AI run itself; see the <a class="jump" onclick="jump('cash')">Cash</a> tab for the rent payment we approved afterward as the human.</p>
+    </div>
+  </section>
+
+  <!-- TICKET 103 -->
+  <section class="tab-panel" id="t103">
+    <div class="card">
+      <h2>Ticket 103 — Bulk discount request</h2>
+      <div class="ticket-meta">
+        <div><span class="label">From</span>Yale AI Club</div>
+        <div><span class="label">What</span>Bulk hoodie discount</div>
+        <div><span class="label">Item</span>Navy hoodie, size M, qty 20</div>
+      </div>
+
+      <h3 class="section-title">What we expected</h3>
+      <p><strong>Who should get asked first, and why:</strong> Inventory, first. Before a discount is even worth discussing, we need to know whether we can physically fill an order for 20 — if there's a big shortage, that's the bigger problem, not the price.</p>
+
+      <h3 class="section-title">What we expected to happen</h3>
+      <ol>
+        <li><span class="pill">Boss asks Inventory</span> — "how many navy hoodies (size M) do we have, can we cover 20?" Inventory reports 8 on hand, a shortage of 12, and names the supplier who could restock the rest.</li>
+        <li><span class="pill">Boss asks Accounting</span> — "check the profit margin on this item before we treat a discount as approvable, and tell me if a restock from our supplier is even possible right now." Accounting reports the markup (plenty of room at full price, though no specific discount amount was given to judge), and separately reports the same supplier already has an unpaid bill blocking any new order — so the shortage can't be fixed yet regardless of pricing.</li>
+      </ol>
+      <p>We did <em>not</em> expect Customer Service to get involved here — this reads as an internal stock-and-pricing decision, not something needing a customer-facing message.</p>
+
+      <h3 class="section-title">What actually happened</h3>
+      <p><strong>Who got asked first:</strong> Inventory — matches what we expected. The Boss asked Inventory and Accounting at the same time, same pattern as Ticket 102.</p>
+
+      <h3 class="section-title">The back-and-forth</h3>
+      <ol>
+        <li><span class="pill">Boss → Inventory</span> — confirmed 8 on hand vs. 20 requested, a shortage of 12, and named the same supplier as Ticket 101.</li>
+        <li><span class="pill">Boss → Accounting</span> — worked out the profit margin ($36 per hoodie, $720 total at full price) and, importantly, noticed the Ticket-101 bill had since been paid (we'd approved it ourselves by this point) — so it tried placing a new restock order, <strong>and it worked</strong>, creating a new bill for $264 that's waiting on approval.</li>
+        <li><span class="pill">Inventory and Accounting</span> double-checked each other's findings a few times (the same repetitive pattern we saw on Ticket 101), and in doing so Accounting tried placing a <em>second</em> restock order — this one was correctly turned down, because the brand-new $264 bill it had just created was itself still unpaid. A fresh block, created by the team's own action in the same conversation.</li>
+      </ol>
+
+      <h3 class="section-title">What the team actually checked</h3>
+      <ul>
+        <li>Inventory checked stock, the supplier list, and today's date — as expected.</li>
+        <li>Accounting checked the unpaid bill, the item's margin, and the cash on hand — as expected.</li>
+        <li>Accounting actually tried to place a restock order — something we hadn't predicted it would get far enough to attempt — and it both succeeded once and correctly failed once, in the same conversation.</li>
+        <li>The Boss closed the ticket out with a final status update.</li>
+      </ul>
+
+      <h3 class="section-title">Outcome</h3>
+      <p>Final status: <span class="pill">Blocked</span> (matches what we expected, though for a more interesting reason than we guessed — see <a class="jump" onclick="jump('reflection')">Reflection</a>). A real, approvable restock order for $264 now exists. We tried approving it as the human — see the <a class="jump" onclick="jump('cash')">Cash</a> tab for what happened.</p>
+    </div>
+  </section>
+
+  <!-- CASH -->
+  <section class="tab-panel" id="cash">
+    <div class="card">
+      <h2>Cash — where the money went</h2>
+      <p class="note">
+        We reset the shop's records to a clean starting point right before this run, so every number below starts from scratch.
+      </p>
+
+      <h3 class="section-title">1. Starting balance (right after the reset)</h3>
+      <p class="big-number">$3,400.00</p>
+
+      <h3 class="section-title">2. What changed on each ticket</h3>
+      <table>
+        <tr>
+          <th>Ticket</th>
+          <th>What happened</th>
+          <th>Change</th>
+          <th>Balance after</th>
+        </tr>
+        <tr class="row">
+          <td><a class="jump" onclick="jump('t101')">101</a></td>
+          <td>The AI team correctly refused to even draft a new order while an old bill was unpaid. We then approved that bill ourselves, as the human, so the supplier could work with us again.</td>
+          <td style="color:var(--bad);">&minus;$840.00</td>
+          <td>$2,560.00</td>
+        </tr>
+        <tr class="row">
+          <td><a class="jump" onclick="jump('t102')">102</a></td>
+          <td>The AI team confirmed we had enough cash to cover rent but never paid it themselves — payments always need a human. We approved it.</td>
+          <td style="color:var(--bad);">&minus;$2,400.00</td>
+          <td>$160.00</td>
+        </tr>
+        <tr class="row">
+          <td><a class="jump" onclick="jump('t103')">103</a></td>
+          <td>Once the old bill was paid (above), the supplier was unblocked and the AI team drafted a brand-new restock order for $264. We tried to approve it too, and the system correctly said no — paying it would have taken our balance below zero.</td>
+          <td style="color:var(--warn);">$0.00 (declined)</td>
+          <td>$160.00</td>
+        </tr>
+      </table>
+
+      <h3 class="section-title">3. Ending balance</h3>
+      <p class="big-number">$160.00</p>
+      <p class="note">
+        $3,400.00 &minus; $840.00 (Ticket 101's overdue bill) &minus; $2,400.00 (Ticket 102's rent) &minus; $0.00 (Ticket 103's new order, which we weren't able to afford) = <strong>$160.00</strong>.
+        We double-checked this number directly against the shop's records, and it matches exactly: two payments went out, and the third one (the new $264 restock order) is still sitting there unpaid because there isn't enough cash for it yet.
+      </p>
+    </div>
+  </section>
+
+  <!-- REFLECTION -->
+  <section class="tab-panel" id="reflection">
+    <div class="card">
+      <h2>Reflection</h2>
+      <p class="note">
+        Everything below is based on what really happened in the runs on
+        <a class="jump" onclick="jump('t101')">Ticket 101</a>
+        <a class="jump" onclick="jump('t102')">Ticket 102</a>
+        <a class="jump" onclick="jump('t103')">Ticket 103</a>
+        <a class="jump" onclick="jump('cash')">Cash</a> — not a general guess about how the system is "supposed to" work.
+      </p>
+
+      <h3 class="reflect-q">1. How well did the team do on each ticket?</h3>
+
+      <p class="reflect-sub">Ticket 102 — the clean one</p>
+      <p>This was the cheapest and most reliable of the three: every time we ran it, the team needed exactly 3 check-ins and landed on the same real answer — rent of $2,400 due in 2 days, enough cash to cover it, ready for a person to approve. The only thing that changed between runs was the exact word used to close it out: sometimes "blocked," sometimes "escalated," for the identical facts and the identical recommendation. That's a genuine thing we noticed, not a guess: the substance was rock-solid every time, but the exact wording wasn't. See the <a class="jump" onclick="jump('t102')">Ticket 102</a> tab for the actual text.</p>
+
+      <p class="reflect-sub">Ticket 103 — correct, a little repetitive, and surprisingly clever once things changed</p>
+      <p>Inventory and Accounting got every number right, every time (8 on hand vs. 20 needed, a $36-per-hoodie profit margin). The most interesting thing wasn't something we could have predicted ahead of time: this ticket ran a second time <em>after</em> we'd already paid off Ticket 101's overdue bill (see <a class="jump" onclick="jump('cash')">Cash</a>), and Accounting noticed that on its own, then successfully placed a brand-new restock order for $264. The exact same system that refused to order anything the first time around said yes the moment the real obstacle went away — with nothing about the system itself changing, just the real-world facts. Then, in that same conversation, it tried to place a second order and got turned down again, this time because the order it had just created was itself unpaid. And when we tried approving that new $264 order ourselves afterward, the system correctly refused it too, because we didn't have enough cash. Three different "no, not yet" moments, all for real reasons, all in one ticket — more interesting than if everything had just gone smoothly. The cost of all this back-and-forth: Inventory and Accounting re-confirmed the same basic facts with each other something like six separate times before the Boss finally closed it out.</p>
+
+      <p class="reflect-sub">Ticket 101 — correct, slow, and the one that exposed a real glitch in our own setup</p>
+      <p>The conclusion was right every single time it finished: no shirts in stock, the supplier blocked by an overdue $840 bill, and an honest (never-sent) note drafted for the customer. But this ticket needed <strong>9 check-ins</strong> between team members — three times what Ticket 102 needed — because Inventory double-checked with Accounting on its own, Accounting checked back with Inventory, and then Customer Service asked both of them essentially the same two questions all over again before writing its note. Every individual check was reasonable; together, they were more than necessary. On top of that, while testing this ticket live, our own connection to the system dropped partway through (a timing glitch on our end, not a mistake by the AI team) — the team still finished the job correctly and we confirmed that directly in the shop's records, but it's a real rough edge in our own testing setup worth noting, not a failure of the team itself.</p>
+
+      <h3 class="reflect-q">2. How did reality compare to our original plan?</h3>
+      <p>Our "who gets asked first" guesses were all correct: Inventory first on <a class="jump" onclick="jump('t101')">101</a>, Facilities first on <a class="jump" onclick="jump('t102')">102</a>, Inventory first on <a class="jump" onclick="jump('t103')">103</a>. Where reality differed from the plan:</p>
+      <ul>
+        <li><strong>Team members got asked at the same time, not one after another.</strong> We expected the Boss to ask one specialist, wait, then ask the next. In practice, on both 102 and 103, the Boss asked its two specialists in the same breath.</li>
+        <li><strong>We underestimated how much the specialists would check with each other.</strong> Our plan only had the Boss handing work out and Customer Service checking back down the chain. We didn't expect Inventory and Accounting to go back and forth with <em>each other</em> unprompted — but that's exactly what made Ticket 101 take 9 check-ins and made Ticket 103 so chatty.</li>
+        <li><strong>Our one specific guess was right.</strong> We flagged ahead of time that we weren't sure Customer Service would get pulled into Ticket 103 — confirmed, it never did.</li>
+        <li><strong>We didn't expect Accounting to actually try placing a restock order on Ticket 103</strong> — a nice surprise: it went further than just checking whether something was blocked, it tried to act, and the system correctly stopped it when it should have.</li>
+      </ul>
+
+      <h3 class="reflect-q">3. Would one single assistant with all the tools have been simpler?</h3>
+      <p>Honestly, for these three tickets specifically — yes, mostly. On <a class="jump" onclick="jump('t101')">Ticket 101</a>, Accounting checked several things on its own and then separately asked Inventory a question that it could have just answered itself with one more lookup, if it had been given direct access. None of the three tickets actually needed separate "departments" that couldn't be handled by one capable assistant working through the same checklist — check the stock, check the bill, check the cash, check the margin, write the message. A single assistant with every tool available would likely have reached the same three conclusions faster and with less back-and-forth, skipping the repeated double-checking that inflated Ticket 101 to 9 check-ins and made Ticket 103 so chatty.</p>
+      <p>What splitting the work into a team still buys us, and why we'd keep it anyway: each team member only has access to the tools their job actually needs. Customer Service, for example, can't approve or send a payment even by accident — it was never given that ability. A single all-powerful assistant has no built-in guardrail stopping it from paying something the moment it talks itself into a reason to; it would depend entirely on instructions being followed carefully, rather than a hard boundary. That protection is worth more as the shop starts handling riskier kinds of requests — for these three tickets alone, the team structure mostly just cost us some extra back-and-forth.</p>
+
+      <h3 class="reflect-q">4. Three new problems this team could already help with</h3>
+      <ol>
+        <li><strong>Catching low stock before a customer ever notices.</strong> Right now, Inventory only checks a product when a ticket mentions it — the white tee sat at zero until Tauhid's order (<a class="jump" onclick="jump('t101')">Ticket 101</a>) brought it up. A regular sweep where the team checks every product's stock level on its own, and flags anything running low to Accounting for a draft restock order, would catch the next empty shelf before a customer runs into it.</li>
+        <li><strong>Deciding which overdue bill to pay first when cash is tight.</strong> The <a class="jump" onclick="jump('cash')">Cash</a> tab shows just how thin the margin is: $3,400 in, $2,400 rent plus an $840 bill due, only $1,000 left over. If a third bill showed up overdue the same week, Accounting already has everything it needs to check cash and bill status — it would just need guidance on how to rank several pending bills against one bank balance, instead of judging requests one at a time like it does now.</li>
+        <li><strong>Turning repeated discount requests into a standing rule.</strong> The Yale AI Club's bulk order (<a class="jump" onclick="jump('t103')">Ticket 103</a>) is exactly the kind of request a shop gets over and over during busy seasons. Accounting already works out the profit margin every time one of these comes in — the next step would be noticing the pattern across several similar requests and suggesting a standing policy ("student groups ordering 15 or more get 10% off automatically, as long as margin stays healthy") instead of redoing the same math every single time.</li>
+      </ol>
+
+      <h3 class="reflect-q">5. Three new problems this team could NOT solve yet — and what it would take</h3>
+      <ol>
+        <li>
+          <strong>A paid bill doesn't actually put anything back on the shelf.</strong> Even after we paid off the overdue bill, nothing in the system ever increases the actual stock count — placing a restock order only creates a new bill, not new inventory. Look at <a class="jump" onclick="jump('t101')">Ticket 101</a>: Inventory reports zero in stock every single time, even after the bill is paid, because nothing ever tells the system a shipment actually arrived. <strong>What it would take:</strong> no new team member — Inventory already owns this — just one new tool that lets Inventory record "the shipment came in" and bump the stock count, probably only usable once the matching bill shows as paid.
+        </li>
+        <li>
+          <strong>A customer changing their mind or asking for a refund.</strong> Orders are locked in exactly as submitted, and money only ever flows out to suppliers and the landlord — never back to a customer (that's a rule we set on purpose, not something we overlooked). If Tauhid read Customer Service's note on <a class="jump" onclick="jump('t101')">Ticket 101</a> and replied "never mind, refund me," there's genuinely nothing the team could do about it except write another message. <strong>What it would take:</strong> a way to edit or cancel an order, a refund tool that can send money back out (which means deliberately revisiting our "cash only goes out" rule, not breaking it by accident), and Accounting owning that approval the same way it owns payments today.
+        </li>
+        <li>
+          <strong>Spotting a fake or suspicious request.</strong> Ticket 103 was accepted and worked on purely because it showed up as a ticket — nothing checks whether "Yale AI Club" is a real, previously-seen customer, or whether a brand-new name asking for 20 units on day one is unusual. Nothing in the system currently looks at who's asking, only at what they're asking for. <strong>What it would take:</strong> a record of past orders per customer, a way for the team to look that history up, and either a quick trust-check built into how the Boss routes a ticket, or — if it gets complicated enough — a sixth team member whose only job is flagging anything that looks off before anyone else spends time on it.
+        </li>
+      </ol>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  function jump(tab) {
+    const btn = document.querySelector('.tab-btn[data-tab="' + tab + '"]');
+    if (btn) btn.click();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
