@@ -216,3 +216,7 @@ Append real runs to output/audit_trail.json. Finish output/harness.md so it cove
 29. when i say see reset the data why are the steps still available: [screenshot of ticket 101 after clicking "Reset data" — checking balance back to $3,400.00 and status "Open," but the Agent Feed still showing old historical steps from a prior run]
 
 30. okay noted thank you
+
+31. [image: expected file layout for hw5/] okay not i need to push this to be public on Github repository so the graders can clone it. I will need to submit the Repo URL for grading so please put it in output/githubt_url.txt. Do not push the real .env to the Github repo. Do include both database files under data/ (the original and your working copy) so graders can run your app easily. I've included the expected layout in the photo
+
+README should explain: copy original DB to the working copy when you need a clean run, start mcp server, start FastAPI backend, start the reach board, reset the DB before a full three-ticket run
